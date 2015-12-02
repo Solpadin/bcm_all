@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bcmlib", "Bcmlib\Bcmlib.vcxproj", "{95A85BAA-1712-4274-ACE9-B68AC5024D61}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qd", "qd\qd.vcxproj", "{A42630D1-91FE-4E07-B172-8D79628B7B57}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "c3d-file-access", "c3d-file-access\c3d-file-access.vcxproj", "{E95E6E27-23FB-495C-9BFB-35DFFA252E5E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bslib", "Bslib\Bslib.vcxproj", "{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bcm-start", "bcm-start\bcm-start.vcxproj", "{DDA56088-1218-41AC-804C-C86202DB0694}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E95E6E27-23FB-495C-9BFB-35DFFA252E5E} = {E95E6E27-23FB-495C-9BFB-35DFFA252E5E}
+		{95A85BAA-1712-4274-ACE9-B68AC5024D61} = {95A85BAA-1712-4274-ACE9-B68AC5024D61}
+		{A42630D1-91FE-4E07-B172-8D79628B7B57} = {A42630D1-91FE-4E07-B172-8D79628B7B57}
+		{9C598CDC-2362-49A1-9F2C-47FC393DAF1C} = {9C598CDC-2362-49A1-9F2C-47FC393DAF1C}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95A85BAA-1712-4274-ACE9-B68AC5024D61}.Debug|Win32.ActiveCfg = Debug|Win32
+		{95A85BAA-1712-4274-ACE9-B68AC5024D61}.Debug|Win32.Build.0 = Debug|Win32
+		{95A85BAA-1712-4274-ACE9-B68AC5024D61}.Release|Win32.ActiveCfg = Release|Win32
+		{95A85BAA-1712-4274-ACE9-B68AC5024D61}.Release|Win32.Build.0 = Release|Win32
+		{A42630D1-91FE-4E07-B172-8D79628B7B57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A42630D1-91FE-4E07-B172-8D79628B7B57}.Debug|Win32.Build.0 = Debug|Win32
+		{A42630D1-91FE-4E07-B172-8D79628B7B57}.Release|Win32.ActiveCfg = Release|Win32
+		{A42630D1-91FE-4E07-B172-8D79628B7B57}.Release|Win32.Build.0 = Release|Win32
+		{E95E6E27-23FB-495C-9BFB-35DFFA252E5E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E95E6E27-23FB-495C-9BFB-35DFFA252E5E}.Debug|Win32.Build.0 = Debug|Win32
+		{E95E6E27-23FB-495C-9BFB-35DFFA252E5E}.Release|Win32.ActiveCfg = Release|Win32
+		{E95E6E27-23FB-495C-9BFB-35DFFA252E5E}.Release|Win32.Build.0 = Release|Win32
+		{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}.Debug|Win32.Build.0 = Debug|Win32
+		{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}.Release|Win32.ActiveCfg = Release|Win32
+		{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}.Release|Win32.Build.0 = Release|Win32
+		{DDA56088-1218-41AC-804C-C86202DB0694}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DDA56088-1218-41AC-804C-C86202DB0694}.Debug|Win32.Build.0 = Debug|Win32
+		{DDA56088-1218-41AC-804C-C86202DB0694}.Release|Win32.ActiveCfg = Release|Win32
+		{DDA56088-1218-41AC-804C-C86202DB0694}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
