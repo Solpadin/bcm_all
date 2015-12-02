@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{95A85BAA-1712-4274-ACE9-B68AC5024D61}</ProjectGuid>
+    <RootNamespace>Bcmlib</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Lib\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Lib\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Lib\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs\Mpich_1_4;$(SolutionDir)qd;$(SolutionDir)Bslib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BrowseInformation>false</BrowseInformation>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)qd;$(SolutionDir)Bslib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Bсm_ident.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Cacou3d.cpp" />
+    <ClCompile Include="Ccells.cpp" />
+    <ClCompile Include="Cgrid.cpp" />
+    <ClCompile Include="CProfile.cpp" />
+    <ClCompile Include="CPro_bars.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="CPro_bpr.cpp" />
+    <ClCompile Include="CPro_cable.cpp" />
+    <ClCompile Include="CPro_fitting.cpp" />
+    <ClCompile Include="CPro_lpr.cpp" />
+    <ClCompile Include="CPro_skin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="CPro_tower.cpp" />
+    <ClCompile Include="CPro_wire.cpp" />
+    <ClCompile Include="Drafts.cpp" />
+    <ClCompile Include="Kernel.cpp" />
+    <ClCompile Include="Montage.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Nodes.cpp" />
+    <ClCompile Include="Nurbs.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Unit_mes.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Cgrid_el.cpp" />
+    <ClCompile Include="Cgrid_qg.cpp" />
+    <ClCompile Include="Cacou.cpp" />
+    <ClCompile Include="Cmapi.cpp" />
+    <ClCompile Include="Cwave.cpp" />
+    <ClCompile Include="Clame2d.cpp" />
+    <ClCompile Include="Clame3d.cpp" />
+    <ClCompile Include="Ccohes2d.cpp" />
+    <ClCompile Include="Ccohes3d.cpp" />
+    <ClCompile Include="Cmindl2d.cpp" />
+    <ClCompile Include="Cmindl3d.cpp" />
+    <ClCompile Include="Cheat2d.cpp" />
+    <ClCompile Include="Cheat3d.cpp" />
+    <ClCompile Include="Cvisco2d_grad.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cacou3d.h" />
+    <ClInclude Include="cbase.h" />
+    <ClInclude Include="ccells.h" />
+    <ClInclude Include="cdraft.h" />
+    <ClInclude Include="cgrid.h" />
+    <ClInclude Include="complex.h" />
+    <ClInclude Include="cprofile.h" />
+    <ClInclude Include="cpro_bars.h" />
+    <ClInclude Include="cpro_bpr.h" />
+    <ClInclude Include="cpro_cable.h" />
+    <ClInclude Include="cpro_fitting.h" />
+    <ClInclude Include="cpro_lpr.h" />
+    <ClInclude Include="cpro_skin.h" />
+    <ClInclude Include="cpro_tower.h" />
+    <ClInclude Include="cpro_wire.h" />
+    <ClInclude Include="cshapes.h" />
+    <ClInclude Include="csmixer.h" />
+    <ClInclude Include="drafts.h" />
+    <ClInclude Include="kernel.h" />
+    <ClInclude Include="lib_tb.h" />
+    <ClInclude Include="montage.h" />
+    <ClInclude Include="nurbs.h" />
+    <ClInclude Include="shapes.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="unit_mes.h" />
+    <ClInclude Include="utils.h" />
+    <ClInclude Include="cgrid_el.h" />
+    <ClInclude Include="cgrid_qg.h" />
+    <CustomBuildStep Include="cacou.h" />
+    <ClInclude Include="cbeam.h" />
+    <ClInclude Include="cexpp.h" />
+    <ClInclude Include="cheat.h" />
+    <ClInclude Include="cmapi.h" />
+    <ClInclude Include="cpoly.h" />
+    <CustomBuildStep Include="cwave.h" />
+    <ClInclude Include="cblocked.h" />
+    <ClInclude Include="ccomput2d.h" />
+    <ClInclude Include="ccomput3d.h" />
+    <ClInclude Include="csolver.h" />
+    <ClInclude Include="csparse.h" />
+    <ClInclude Include="clame2d.h" />
+    <ClInclude Include="clame3d.h" />
+    <ClInclude Include="chydro3d.h" />
+    <ClInclude Include="ccohes2d.h" />
+    <ClInclude Include="ccohes3d.h" />
+    <ClInclude Include="cmindl2d.h" />
+    <ClInclude Include="cmindl3d.h" />
+    <ClInclude Include="cheat2d.h" />
+    <ClInclude Include="cheat3d.h" />
+    <CustomBuildStep Include="cvisco2d_grad.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\qd\qd.vcxproj">
+      <Project>{a42630d1-91fe-4e07-b172-8d79628b7b57}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

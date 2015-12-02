@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Nodes">
+      <UniqueIdentifier>{3a5569ad-7810-4a97-b324-1ad4748a823a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shapes">
+      <UniqueIdentifier>{eac4c10b-67f9-4c0e-a873-4cc1c32bd387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Solvs">
+      <UniqueIdentifier>{028b0374-df7e-437a-946f-5b295ab6657e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts">
+      <UniqueIdentifier>{eb84e8fe-788c-40a8-999c-9f36afb2075a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts\Elastic">
+      <UniqueIdentifier>{403d0eee-483f-485a-a728-15d8323336bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts\Heat">
+      <UniqueIdentifier>{f5723355-0efe-4021-8508-3f731a452528}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts\Cohesion">
+      <UniqueIdentifier>{bab548fb-7acd-463e-987b-e76ed95c4daf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Profiles">
+      <UniqueIdentifier>{3aed6c7a-f1a7-4ac6-8ceb-be3582f27713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts\Acoustics">
+      <UniqueIdentifier>{2f04f644-26dc-495f-b11b-76de277ef179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Drafts\Visco">
+      <UniqueIdentifier>{754e582c-d3f0-43d3-b920-f4c26d29e519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Basic">
+      <UniqueIdentifier>{ceec23b5-ba5f-467e-888b-99378ec3c27e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Basic\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Basic\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Ccells.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cgrid.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Kernel.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Nurbs.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cgrid_el.cpp">
+      <Filter>Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="Cgrid_qg.cpp">
+      <Filter>Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="Cacou.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Cmapi.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Cwave.cpp">
+      <Filter>Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="Clame2d.cpp">
+      <Filter>Drafts\Elastic</Filter>
+    </ClCompile>
+    <ClCompile Include="Clame3d.cpp">
+      <Filter>Drafts\Elastic</Filter>
+    </ClCompile>
+    <ClCompile Include="Ccohes2d.cpp">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClCompile>
+    <ClCompile Include="Ccohes3d.cpp">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClCompile>
+    <ClCompile Include="Cmindl2d.cpp">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClCompile>
+    <ClCompile Include="Cmindl3d.cpp">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClCompile>
+    <ClCompile Include="Cheat2d.cpp">
+      <Filter>Drafts\Heat</Filter>
+    </ClCompile>
+    <ClCompile Include="Cheat3d.cpp">
+      <Filter>Drafts\Heat</Filter>
+    </ClCompile>
+    <ClCompile Include="Cvisco2d_grad.cpp">
+      <Filter>Drafts\Visco</Filter>
+    </ClCompile>
+    <ClCompile Include="Bсm_ident.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Montage.cpp">
+      <Filter>Basic\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CProfile.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit_mes.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_bars.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_bpr.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_cable.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_fitting.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_skin.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_tower.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_wire.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="CPro_lpr.cpp">
+      <Filter>Profiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Cacou3d.cpp">
+      <Filter>Drafts\Acoustics</Filter>
+    </ClCompile>
+    <ClCompile Include="Nodes.cpp">
+      <Filter>Nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="Drafts.cpp">
+      <Filter>Drafts</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cbase.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ccells.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cdraft.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cgrid.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="complex.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cshapes.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="csmixer.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kernel.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="nurbs.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cgrid_el.h">
+      <Filter>Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="cgrid_qg.h">
+      <Filter>Nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="cbeam.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="cexpp.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="cmapi.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="cpoly.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="cblocked.h">
+      <Filter>Solvs</Filter>
+    </ClInclude>
+    <ClInclude Include="ccomput2d.h">
+      <Filter>Solvs</Filter>
+    </ClInclude>
+    <ClInclude Include="ccomput3d.h">
+      <Filter>Solvs</Filter>
+    </ClInclude>
+    <ClInclude Include="csolver.h">
+      <Filter>Solvs</Filter>
+    </ClInclude>
+    <ClInclude Include="csparse.h">
+      <Filter>Solvs</Filter>
+    </ClInclude>
+    <ClInclude Include="clame2d.h">
+      <Filter>Drafts\Elastic</Filter>
+    </ClInclude>
+    <ClInclude Include="clame3d.h">
+      <Filter>Drafts\Elastic</Filter>
+    </ClInclude>
+    <ClInclude Include="ccohes2d.h">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClInclude>
+    <ClInclude Include="ccohes3d.h">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClInclude>
+    <ClInclude Include="cmindl2d.h">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClInclude>
+    <ClInclude Include="cmindl3d.h">
+      <Filter>Drafts\Cohesion</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat2d.h">
+      <Filter>Drafts\Heat</Filter>
+    </ClInclude>
+    <ClInclude Include="cheat3d.h">
+      <Filter>Drafts\Heat</Filter>
+    </ClInclude>
+    <ClInclude Include="montage.h">
+      <Filter>Basic\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cprofile.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="unit_mes.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_bars.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_bpr.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_cable.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_fitting.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_lpr.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_skin.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_tower.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cpro_wire.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="lib_tb.h">
+      <Filter>Profiles</Filter>
+    </ClInclude>
+    <ClInclude Include="cacou3d.h">
+      <Filter>Drafts\Acoustics</Filter>
+    </ClInclude>
+    <ClInclude Include="shapes.h">
+      <Filter>Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="drafts.h">
+      <Filter>Drafts</Filter>
+    </ClInclude>
+    <ClInclude Include="chydro3d.h">
+      <Filter>Drafts</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuildStep Include="cacou.h">
+      <Filter>Shapes</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="cwave.h">
+      <Filter>Shapes</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="cvisco2d_grad.h">
+      <Filter>Drafts\Visco</Filter>
+    </CustomBuildStep>
+  </ItemGroup>
+</Project>
