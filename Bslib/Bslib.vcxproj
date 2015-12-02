@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="atac.cpp" />
+    <ClCompile Include="cg.cpp" />
+    <ClCompile Include="corr.cpp" />
+    <ClCompile Include="Decomp.cpp" />
+    <ClCompile Include="DecompBnd.cpp" />
+    <ClCompile Include="DecompSplit.cpp" />
+    <ClCompile Include="ExchangeMPI.cpp" />
+    <ClCompile Include="fct.cpp" />
+    <ClCompile Include="fourier.cpp" />
+    <ClCompile Include="func.cpp" />
+    <ClCompile Include="globals.cpp" />
+    <ClCompile Include="gmres.cpp" />
+    <ClCompile Include="gps.cpp" />
+    <ClCompile Include="gsmatrix.cpp" />
+    <ClCompile Include="gsmatrixc.cpp" />
+    <ClCompile Include="hyst.cpp" />
+    <ClCompile Include="ich2browc.cpp" />
+    <ClCompile Include="ich2gcs.cpp" />
+    <ClCompile Include="ich2r.cpp" />
+    <ClCompile Include="ich2rb.cpp" />
+    <ClCompile Include="ich2rs.cpp" />
+    <ClCompile Include="ilu2browc.cpp" />
+    <ClCompile Include="ilu2browr.cpp" />
+    <ClCompile Include="ilu2browr2ind.cpp" />
+    <ClCompile Include="ilu2cs.cpp" />
+    <ClCompile Include="ilu2gcs.cpp" />
+    <ClCompile Include="ilu2grs.cpp" />
+    <ClCompile Include="ilu2grs2ind.cpp" />
+    <ClCompile Include="ilu2r.cpp" />
+    <ClCompile Include="ilu2rs.cpp" />
+    <ClCompile Include="lanczos.cpp" />
+    <ClCompile Include="lanczosc.cpp" />
+    <ClCompile Include="lapackd.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mpid.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="mvm.cpp" />
+    <ClCompile Include="mvmc.cpp" />
+    <ClCompile Include="newton.cpp" />
+    <ClCompile Include="ordmatr.cpp" />
+    <ClCompile Include="ordmatrnd.cpp" />
+    <ClCompile Include="parfbss.cpp" />
+    <ClCompile Include="qrd.cpp" />
+    <ClCompile Include="rcm.cpp" />
+    <ClCompile Include="sendrecv.cpp" />
+    <ClCompile Include="smatrix.cpp" />
+    <ClCompile Include="smatrixc.cpp" />
+    <ClCompile Include="smatrixcs.cpp" />
+    <ClCompile Include="smatrixr.cpp" />
+    <ClCompile Include="smatrixrb.cpp" />
+    <ClCompile Include="smatrixrs.cpp" />
+    <ClCompile Include="sofgmres.cpp" />
+    <ClCompile Include="solvers.cpp" />
+    <ClCompile Include="sor.cpp" />
+    <ClCompile Include="svector.cpp" />
+    <ClCompile Include="svectorc.cpp" />
+    <ClCompile Include="tree.cpp" />
+    <ClCompile Include="unroll.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="complex.h" />
+    <ClInclude Include="corr.h" />
+    <ClInclude Include="CpuTree.h" />
+    <ClInclude Include="Decomp.h" />
+    <ClInclude Include="ExchangeMPI.h" />
+    <ClInclude Include="fct.h" />
+    <ClInclude Include="fctdiag.h" />
+    <ClInclude Include="fourier.h" />
+    <ClInclude Include="func.h" />
+    <ClInclude Include="globals.h" />
+    <ClInclude Include="gsmatrix.h" />
+    <ClInclude Include="hyst.h" />
+    <ClInclude Include="mvm.h" />
+    <ClInclude Include="parfbss.h" />
+    <ClInclude Include="parfbss_data.h" />
+    <ClInclude Include="qrd.h" />
+    <ClInclude Include="slvparam.h" />
+    <ClInclude Include="smatrix.h" />
+    <ClInclude Include="SolverPar.h" />
+    <ClInclude Include="svector.h" />
+    <ClInclude Include="tree.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9C598CDC-2362-49A1-9F2C-47FC393DAF1C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Bslib</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Lib\</OutDir>
+    <IntDir>$(SolutionDir)Lib\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Lib\</OutDir>
+    <IntDir>$(SolutionDir)Lib\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Libs\Mpich_1_4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Libs\Mpich_1_4;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
