@@ -4459,91 +4459,6 @@ void CLame3D::rdivrf_matrix(double ** T, int n, int shift_m, int shift_n, double
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
-//...формирование матрицы переразложения для оператора grad{div{r^{-2n-1}*vec{f}_0}} (сингулярные функции);
-void CLame3D::grdivf_forwrd(double ** T, int n, int shift_m, int shift_n, double f)
-{ 
-	if (T) {
-		int nn = 2*n+1, m, mm = nn+4, shifn, shifm; 
-		double dd;
-//...Re fw;
-		T[shift_m+mm][shift_n+nn] += (dd = (n+1.)*(n+2)*.25*f);
-		T[shift_m][shift_n] -= dd;
-		if (n > 1)	{
-			T[shift_m+mm][shift_n+3] -= f;
-			T[shift_m][shift_n+4] += f; T[shift_m][shift_n+3+nn] += f; T[shift_m+mm][shift_n+4+nn] += f;
-		}
-		if (n > 0)	{
-			T[shift_m+mm][shift_n+1+nn*2] += (dd = (n+2.)*.5*f);
-			T[shift_m][shift_n+2+nn*2] -= dd;
-		}
-		for (m = 1; m <= n; m++) { 
-			shifn = shift_n+m*2;	shifm = shift_m+m*2;
-			T[shifm][shifn] += (dd = -(n+m+1.)*(n+m+2.)*.125*f);
-			T[shifm][shifn-1+nn] -= dd; T[shifm-1][shifn-1] -= dd; T[shifm-1][shifn+nn] -= dd;
-			if (m < n-1)	{
-				T[shifm-1][shifn+3] += (dd = -(m+1.)*(m+2.)*.5*f);
-				T[shifm][shifn+4] -= dd; T[shifm][shifn+3+nn] -= dd; T[shifm-1][shifn+4+nn] -= dd;
-			}
-			if (m < n)	{
-				T[shifm-1][shifn+1+nn*2] += (dd = (m+1.)*(n+m+2.)*.5*f);
-				T[shifm][shifn+2+nn*2] -= dd;
-			}
-		} 
-//...Im fw;
-		for (m = 1; m <= n+2; m++) { 
-			shifn = shift_n+m*2;	shifm = shift_m+m*2+mm;
-			if (m <= n)	{
-				T[shifm-1][shifn-1] += (dd = (n+m+1.)*(n+m+2.)*.125*f);
-				T[shifm][shifn] -= dd; T[shifm][shifn-1+nn] -= dd; T[shifm-1][shifn+nn] -= dd;
-				if (m == 1)	{	
-					T[shifm-1][shifn+nn] += (dd = (n+2.)*(n+3.)*.125*f);
-					T[shifm][shifn] -= dd; T[shifm][shifn-1+nn] -= dd; T[shifm-1][shifn-1] -= dd; 
-				}
-			}
-			if (m == 2) {
-				T[shifm-1][shift_n+nn] += (dd = (n+1.)*(n+2.)*(n+3.)*(n+4.)*.03125*f);
-				T[shifm][shift_n] -= dd;
-			}
-			if (m > 2) {
-				T[shifm][shifn-4] += (dd = -(n+m-1.)*(n+m)*(n+m+1.)*(n+m+2.)/((m-1.)*m)*.03125*f);
-				T[shifm][shifn-5+nn] -= dd; T[shifm-1][shifn-4+nn] -= dd; T[shifm-1][shifn-5] -= dd;
-			}
-			if (m == 1)	{	
-				T[shifm][shift_n+nn*2] += (n+1.)*(n+2.)*(n+3.)*.25*f;
-			}
-			if (m > 1 && m <= n+1) {
-				T[shifm-1][shifn-3+nn*2] += (dd = -(n+m)*(n+m+1.)*(n+m+2.)/m*.125*f);
-				T[shifm][shifn-2+nn*2] -= dd;
-			}
-		}
-//...fz;
-		T[shift_m+mm*2][shift_n+nn*2] += (n+1.)*(n+2.)*f;
-		if (n > 0)	{
-			T[shift_m+mm*2][shift_n+1+nn] += (dd = -(n+2.)*f);
-			T[shift_m+mm*2][shift_n+2] += dd;
-		}
-		for (m = 1; m <= n+1; m++) { 
-			shifn = shift_n+m*2;	shifm = shift_m+m*2+mm*2;
-			if (m <= n)	{
-				T[shifm-1][shifn-1+nn*2] += (dd = -(n+m+1.)*(n+m+2.)*.5*f);
-				T[shifm][shifn+nn*2] -= dd;
-			}
-			if (m < n)	{
-				T[shifm-1][shifn+1] += (dd = (m+1.)*(n+m+2.)*.5*f);
- 				T[shifm][shifn+2] -= dd; T[shifm][shifn+1+nn] -= dd; T[shifm-1][shifn+2+nn] -= dd;
-			}
-			if (m == 1)	{
-				T[shifm-1][shift_n+nn] += (dd = -(n+1.)*(n+2.)*(n+3.)*.25*f);
-				T[shifm][shift_n] -= dd; 
-			}
-			if (m > 1) {
-				T[shifm][shifn-2] += (dd = (n+m)*(n+m+1.)*(n+m+2.)/m*.125*f);
-				T[shifm][shifn-3+nn] -= dd; T[shifm-1][shifn-3] -= dd; T[shifm-1][shifn-2+nn] -= dd;
-			}
-		}
-	}
-}
 
 //////////////////////////////////////////////////////////////////////
 //...формирование матрицы переразложения для тождественного оператора;
@@ -4553,7 +4468,7 @@ void CLame3D::unit_f_matrix(double ** T, int n, int shift_m, int shift_n, double
 		int nn = 2*n+1, m, shifn, shifm;
 		double dd;
 //...Re fw;
-		T[shift_m][shift_n] += (dd = .5*f);                                                             
+		T[shift_m][shift_n] += (dd = .5*f);
 		T[shift_m+nn][shift_n+nn] -= dd;
 		for (m = 1; m <= n; m++) { 
 			shifn = shift_n+m*2; shifm = shift_m+m*2;
@@ -4594,29 +4509,6 @@ void CLame3D::toreal_matrix(double ** T, int n, int shift_m, int shift_n)
 				T[shifm+nn*2][l] *=  2.; 
 				T[shifm-1+nn*2][l] *= -2.; 
 				swap(T[shifm+nn][l], T[shifm-1+nn][l]);
-			}
-		}
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//...раскомплексификация строчек матрицы переразложения оператора вперед;
-void CLame3D::toreal_forwrd(double ** T, int n, int shift_m, int shift_n)
-{
-	if (T) {
-		int l, m, nn = 2*n+1, mm = nn+4, shifm; 
-		for (l = 3*nn-1+shift_n; l >= shift_n; l--) {				
-			T[shift_m][l] *= 2.; 
-			T[shift_m+mm][l] *= -2.;
-			for (m = 1; m <= n+2; m++) {
-				shifm = shift_m+m*2;
-				T[shifm][l] = 2.*(T[shifm+mm][l]+T[shifm][l]); 
-				T[shifm-1][l] = -2.*(T[shifm-1+mm][l]+T[shifm-1][l]);
-				T[shifm+mm][l] = 4.*T[shifm+mm][l]-T[shifm][l];
-				T[shifm-1+mm][l] = 4.*T[shifm-1+mm][l]+T[shifm-1][l];
-				T[shifm+mm*2][l] *=  2.; 
-				T[shifm-1+mm*2][l] *= -2.; 
-				swap(T[shifm+mm][l], T[shifm-1+mm][l]);
 			}
 		}
 	}
@@ -5132,7 +5024,7 @@ void CLame3D::block_descrap(char * OUT_FILE)
 			block_bnd->add_buffer(block_bnd->N);
 		}
 	}
-	sprintf(msg, "");
+	sprintf(msg, " ");/*!!! was "", now " " ???*/
 	Message(msg); fprintf(OUT, "%s\n", msg);
 	if (OUT) fclose(OUT);
 
@@ -5763,8 +5655,7 @@ double take_system(double matrix[8][9], double mu_MH, double nu_H)
 				for (l = 0; l <= dim_N; l++) matrix[k][l] -= matrix[l0][l]*finv;
 			}
 	}
-	return(matrix[7][8]); //...чистый сдвиг;
-	//return((1.-2.*nu_H)*(5.-4.*nu_H)*matrix[7][8]-15.*matrix[6][8]); //...простой сдвиг;
+	return(matrix[7][8]);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -5890,8 +5781,7 @@ double take_system(double matrix[12][13], double mu_MH, double nu_H)
 				for (l = 0; l <= dim_N; l++) matrix[k][l] -= matrix[l0][l]*finv;
 			}
 	}
-	return(matrix[11][12]); //...чистый сдвиг;
-	//return((1.-2.*nu_H)*(5.-4.*nu_H)*matrix[11][12]-15.*matrix[10][12]); //...простой сдвиг;
+	return(matrix[11][12]);
 }
 
 /////////////////////////////////////////////////////////////////////////////

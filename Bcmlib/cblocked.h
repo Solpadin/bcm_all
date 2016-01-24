@@ -117,7 +117,7 @@ int CBlockedSolver<T>::solver1(int k)
 			HQRfunction(pivot_C.GetMatrix(), this->hh[this->p[k]][0].GetMatrix()[this->n-1], this->hh[this->p[k]][0].GetMatrix()[this->n-2], N_dim);
 
 			FILE * TST = fopen("eigen_all", k ? "a" : "w");
-			test_gram_matrix(TST, this->p[k], END_STATE, EE);
+			this->test_gram_matrix(TST, this->p[k], END_STATE, EE);
 			fclose(TST);
 		}
 
@@ -254,7 +254,7 @@ int CBlockedSolver<T>::solver2(int k)
 			//HQRfunction(pivot_C.GetMatrix(), this->hh[this->p[k]][0].GetMatrix()[n-1], this->hh[this->p[k]][0].GetMatrix()[n-2], N_dim);
 			
 			FILE * TST = fopen("eigen_all", k ? "a" : "w");
-			test_gram_matrix(TST, this->p[k], END_STATE, EE);
+			this->test_gram_matrix(TST, this->p[k], END_STATE, EE);
 			fclose(TST);
 		}
 

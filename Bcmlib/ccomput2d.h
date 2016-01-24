@@ -65,7 +65,7 @@ void CComput2D<T>::comput1(int opt)
 			//this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]].bar->cells_out("CCells");
 		}
 
-	for (k = 0; k < this->N; k++) SkeletonBounding(this->B[k], par, NULL_STATE);
+	for (k = 0; k < this->N; k++) this->SkeletonBounding(this->B[k], par, NULL_STATE);
 
 ////////////////////////////////////////////////
 //...discrete norm on stitching sides of blocks;
@@ -399,7 +399,7 @@ void CComput2D<T>::comput2(int opt)
 					this->B[k].bar->ce[this->B[k].bar->ce[i]->graph[j+2]]->line_correct();
 					this->B[k].bar->ce[this->B[k].bar->ce[i]->graph[j+2]]->grid_cells1(bnd, 0., N_max);
 
-					elem = block_plink_2D(this->B[k], l = i, m = j, id_dir, par);
+					elem = this->block_plink_2D(this->B[k], l = i, m = j, id_dir, par);
 
 /////////////////////////
 //...интегрируем границу;
@@ -596,7 +596,7 @@ void CComput2D<T>::comput3(int opt)
 		for (j = 0; j < this->solver.JR[k][0]; j++)
 			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE, NULL_STATE);
 
-	for (k = 0; k < this->N; k++) SkeletonBounding(this->B[k], par, NULL_STATE);
+	for (k = 0; k < this->N; k++) this->SkeletonBounding(this->B[k], par, NULL_STATE);
 
 ///////////////////////////////
 //...discrete norm on boundary;
@@ -636,7 +636,7 @@ void CComput2D<T>::comput3(int opt)
 //...задаем периодические граничные условия;
 						pp[0] = par[1]-par[0];
 						pp[1] = par[3]-par[2];
-						pp[2] = block_iddir_2D(this->B[k], i, j, par);
+						pp[2] = this->block_iddir_2D(this->B[k], i, j, par);
 
 						gauss_bnd->facet_QG(Po, N_elem, SPECIAL_STATE);
 						for (int lp = 0; lp < gauss_bnd->N; lp++) {
@@ -734,7 +734,7 @@ void CComput2D<T>::comput4(int opt)
 //...задаем периодические граничные условия;
 						pp[0] = par[1]-par[0];
 						pp[1] = par[3]-par[2];
-						pp[2] = block_iddir_2D(this->B[k], i, j, par);
+						pp[2] = this->block_iddir_2D(this->B[k], i, j, par);
 
 						gauss_bnd->facet_QG(Po, N_elem, SPECIAL_STATE);
 						for (int lp = 0; lp < gauss_bnd->N; lp++) {
@@ -791,7 +791,7 @@ void CComput2D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 		for (j = 0; j < this->solver.JR[k][0]; j++)
 			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE, NULL_STATE);
 
-	for (k = 0; k < this->N; k++) SkeletonBounding(this->B[k], par, NULL_STATE);
+	for (k = 0; k < this->N; k++) this->SkeletonBounding(this->B[k], par, NULL_STATE);
 
 ///////////////////////////////
 //...discrete norm on boundary;
@@ -815,7 +815,7 @@ void CComput2D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 				for (mm = 1, m = this->NUM_PHASE; mm && this->NUM_PHASE && m < this->B[k].link[0]; m++) 
 				if ( this->B[k].link[j+1] == -this->B[k].link[m+1]+SRF_STATE) mm = 0;
 				if (! mm) m = SRF_STATE; else
-				if ( this->B[k].link[j+1] < 0) block_plink_2D(this->B[k], l = i, m = j, id_dir, par);
+				if ( this->B[k].link[j+1] < 0) this->block_plink_2D(this->B[k], l = i, m = j, id_dir, par);
 
 /////////////////////////
 //...интегрируем границу;
@@ -853,9 +853,9 @@ void CComput2D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 					sprintf(msg, "block %4i: bound_bnd->N = %i", k, bound_bnd->N);
 					if (! this->solver.mode(NO_MESSAGE)) Message(msg);
 				}
-				if (_FMF == ERR_VALUE) RigidyAll( bound_bnd, k, K, BASIC_COMPUT); else
+				if (_FMF == ERR_VALUE) this->RigidyAll( bound_bnd, k, K, BASIC_COMPUT); else
 				for (l = 0; l <  bound_bnd->N; l++)
-				GetFuncAllValues(bound_bnd->X[l], bound_bnd->Y[l], bound_bnd->Z[l], K, k, _FMF, id_variant);
+				this->GetFuncAllValues(bound_bnd->X[l], bound_bnd->Y[l], bound_bnd->Z[l], K, k, _FMF, id_variant);
 
 				if (! this->solver.mode(ACCUMULATION))  bound_bnd->add_buffer(bound_bnd->N);
 			}
@@ -981,9 +981,9 @@ void CComput2D<T>::comput6(int opt, T * K, Num_Value _FMF, int id_variant)
 				sprintf(msg, "block %4i: gauss_bnd->N = %i", k, gauss_bnd->N);
 				if (! this->solver.mode(NO_MESSAGE)) Message(msg);
 			}
-			if (_FMF == ERR_VALUE) RigidyAll( gauss_bnd, k, K, VOLUME_COMPUT); else
+			if (_FMF == ERR_VALUE) this->RigidyAll( gauss_bnd, k, K, VOLUME_COMPUT); else
 			for (l = 0; l <  gauss_bnd->N; l++)
-			GetFuncAllValues(gauss_bnd->X[l], gauss_bnd->Y[l], gauss_bnd->Z[l], K, k, _FMF, id_variant);
+			this->GetFuncAllValues(gauss_bnd->X[l], gauss_bnd->Y[l], gauss_bnd->Z[l], K, k, _FMF, id_variant);
 
 			if (! this->solver.mode(ACCUMULATION)) gauss_bnd->add_buffer(gauss_bnd->N);
 		}
@@ -1013,7 +1013,7 @@ void CComput2D<T>::comput7(int opt, T * K)
 	LOOP_OPT(loop, opt, k) if (this->B[k].mp) {
 
 		LOOP_MASK(opt,  k);
-		RigidyAll(NULL, k, K, COVERING_COMPUT);
+		this->RigidyAll(NULL, k, K, COVERING_COMPUT);
 	}
 }
 

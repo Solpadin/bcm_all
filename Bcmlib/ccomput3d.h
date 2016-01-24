@@ -1,4 +1,4 @@
-/*============================================*/
+  /*============================================*/
 /*                  CCOMPUT3D                 */
 /*============================================*/
 #ifndef ___CCOMPUT3D___
@@ -695,7 +695,7 @@ void CComput3D<T>::comput1(int opt)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
 
 	this->SetBlockBounding(par);
 
@@ -785,7 +785,7 @@ void CComput3D<T>::comput1(int opt)
 //...определяем есть ли связь с включением или периодической ячейкой;
 			for (m_cell = BOUNDR_LINK, l = this->NUM_PHASE; l < this->B[k].link[0] && this->NUM_PHASE; l++)
 			if ( this->B[k].link[l+1] == -this->B[k].link[i+1]+SRF_STATE && this->B[k].link[l+1] >= 0) m_cell = INCLUD_LINK;
-			if (m_cell == BOUNDR_LINK && (elem = block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
+			if (m_cell == BOUNDR_LINK && (elem = this->block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
 		
 /////////////////////////////////
 //...накапливаем граничные точки;
@@ -871,7 +871,7 @@ void CComput3D<T>::comput2(int opt)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]]);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]]);
 
 ///////////////////////////////////////////////////////
 //...discrete norm on curvilinear or periodic boundary;
@@ -889,7 +889,7 @@ void CComput3D<T>::comput2(int opt)
 //...определяем есть ли связь с включением или периодической ячейкой;
 			for (m_cell = BOUNDR_LINK, l = this->NUM_PHASE; l < this->B[k].link[0] && this->NUM_PHASE; l++)
 			if  ( this->B[k].link[l+1] == -this->B[k].link[i+1]+SRF_STATE && this->B[k].link[l+1] >= 0) m_cell = INCLUD_LINK;
-			if  (m_cell == BOUNDR_LINK && (elem = block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
+			if  (m_cell == BOUNDR_LINK && (elem = this->block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
 		
 			if  (m_cell != INCLUD_LINK && (! this->solver.mode(NO_TR) || elem == this->solver.p[opt])) {
 				bnd->zero_grid();
@@ -1179,7 +1179,7 @@ void CComput3D<T>::comput3(int opt)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
 
 	this->SetBlockBounding(par);
 
@@ -1201,7 +1201,7 @@ void CComput3D<T>::comput3(int opt)
 //...определяем есть ли связь с включением или периодической ячейкой;
 			for (m_cell = BOUNDR_LINK, l = this->NUM_PHASE; l < this->B[k].link[0] && this->NUM_PHASE; l++)
 			if (this->B[k].link[l+1] == -this->B[k].link[i+1]+SRF_STATE && this->B[k].link[l+1] >= 0) m_cell = INCLUD_LINK;
-			if (m_cell == BOUNDR_LINK && (id_dir = block_iddir_3D(this->B[k], i, par))) m_cell = PERIOD_LINK;
+			if (m_cell == BOUNDR_LINK && (id_dir = this->block_iddir_3D(this->B[k], i, par))) m_cell = PERIOD_LINK;
 
 ////////////////////////////////////////////////////////////////////
 //...искусственная нумерация фасет для параллелепипеда с включением;
@@ -1307,7 +1307,7 @@ void CComput3D<T>::comput4(int opt)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
 
 	this->SetBlockBounding(par);
 
@@ -1346,7 +1346,7 @@ void CComput3D<T>::comput4(int opt)
 					sprintf(msg, "block %4i: block_phs->N = %i", k, block_phs->N);
 					if (! this->solver.mode(NO_MESSAGE)) Message(msg);
 				}
-				trans_esh(block_phs, k, -this->B[k].link[i+1]+SRF_STATE, 0);
+				this->trans_esh(block_phs, k, -this->B[k].link[i+1]+SRF_STATE, 0);
 				if (! this->solver.mode(ACCUMULATION)) block_phs->add_buffer(block_phs->N);
 			}
 		}
@@ -1384,9 +1384,9 @@ void CComput3D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
 
-	for (k = 0; k < this->N; k++) SkeletonBounding(this->B[k], par);
+	for (k = 0; k < this->N; k++) this->SkeletonBounding(this->B[k], par);
 
 ///////////////////////////////
 //...discrete norm on boundary;
@@ -1405,7 +1405,7 @@ void CComput3D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 			for (m_cell = BOUNDR_LINK, l = this->NUM_PHASE; l < this->B[k].link[0] && this->NUM_PHASE; l++)
 			if  ( this->B[k].link[l+1] == -this->B[k].link[i+1]+SRF_STATE && this->B[k].link[l+1] >= 0) m_cell = INCLUD_LINK;
 			if  (m_cell == BOUNDR_LINK &&  this->B[k].link[i+1] >= 0)  m_cell = BLOCKS_LINK;
-			if  (m_cell == BOUNDR_LINK && (elem = block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
+			if  (m_cell == BOUNDR_LINK && (elem = this->block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) m_cell = PERIOD_LINK;
 
 /////////////////////////////////
 //...накапливаем граничные точки;
@@ -1505,9 +1505,9 @@ void CComput3D<T>::comput5(int opt, T * K, Num_Value _FMF, int id_variant)
 				sprintf(msg, "block %4i: bound_bnd->N = %i", k, bound_bnd->N);
 				if (! this->solver.mode(NO_MESSAGE)) Message(msg);
 			}
-			if (_FMF == ERR_VALUE) RigidyAll( bound_bnd, k, K, BASIC_COMPUT); else
+			if (_FMF == ERR_VALUE) this->RigidyAll( bound_bnd, k, K, BASIC_COMPUT); else
 			for (l = 0; l <  bound_bnd->N; l++)
-			GetFuncAllValues(bound_bnd->X[l], bound_bnd->Y[l], bound_bnd->Z[l], K, k, _FMF, id_variant);
+			this->GetFuncAllValues(bound_bnd->X[l], bound_bnd->Y[l], bound_bnd->Z[l], K, k, _FMF, id_variant);
 
 			if (! this->solver.mode(ACCUMULATION))  bound_bnd->add_buffer(bound_bnd->N);
 		}
@@ -1540,7 +1540,7 @@ void CComput3D<T>::comput6(int opt, T * K, Num_Value _FMF, int id_variant)
 
 	LOOP_OPT(loop, opt, k) //...активизируем геометрию блочной строки;
 		for (j = 0; j < this->solver.JR[k][0]; j++)
-			bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
+			this->bar_activate(this->B[this->solver.JR[k][j+this->solver.JR_SHIFT]], NULL_STATE);
 
 /////////////////////////////////////
 //...discrete norm on blocks volume;
@@ -1592,9 +1592,9 @@ void CComput3D<T>::comput6(int opt, T * K, Num_Value _FMF, int id_variant)
 			sprintf(msg, "block %4i: gauss_bnd->N = %i", k, gauss_bnd->N);
 			if (! this->solver.mode(NO_MESSAGE)) Message(msg);
 		}
-		if (_FMF == ERR_VALUE) RigidyAll( gauss_bnd, k, K, VOLUME_COMPUT); else
+		if (_FMF == ERR_VALUE) this->RigidyAll( gauss_bnd, k, K, VOLUME_COMPUT); else
 		for (l = 0; l <  gauss_bnd->N; l++)
-		GetFuncAllValues(gauss_bnd->X[l], gauss_bnd->Y[l], gauss_bnd->Z[l], K, k, _FMF, id_variant);
+		this->GetFuncAllValues(gauss_bnd->X[l], gauss_bnd->Y[l], gauss_bnd->Z[l], K, k, _FMF, id_variant);
 
 		if (! this->solver.mode(ACCUMULATION)) gauss_bnd->add_buffer(gauss_bnd->N);
 	}

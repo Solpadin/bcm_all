@@ -24,9 +24,9 @@ void Convert3D_prb(char * ch_NODES, CGrid * nd, int ID_part);
 #define n_GRAD_MEDIA_DEMO
 #define n_ERROR_FUNCTION_REALIZATION
 #define n_McDonald_FUNCTION_REALIZATION
-#define n_POTENTIAL_LAME3D_REDECOMPOSITION
+#define POTENTIAL_LAME3D_REDECOMPOSITION
 #define n_C3D_CONVERTOR
-#define IGES_CONVERTOR
+#define n_IGES_CONVERTOR
 //----------------------------------------------------------------------------------------
 extern void Read_C3D_Header(unsigned short *num_markers, unsigned short *num_channels, unsigned short *first_field, unsigned short *last_field,
 							float *scale_factor,	unsigned short *start_record_num, unsigned short *frames_per_field, float *video_rate,	FILE *infile);

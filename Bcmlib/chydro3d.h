@@ -277,7 +277,7 @@ public:
 		void set_fasa_hmg(double R0, double ll, double G_dynamic, double alpha, double kk);
 		void set_fasa_hmg(double G_dynamic, double alpha) { set_fasa_hmg(this->get_param(this->NUM_GEOMT), this->get_param(this->NUM_GEOMT+1), G_dynamic, alpha, this->get_param(this->NUM_SHEAR+2));}
 		void set_fasa_hmg(double alpha = 0.) {set_fasa_hmg(this->get_param(this->NUM_GEOMT), this->get_param(this->NUM_GEOMT+1), this->get_param(this->NUM_SHEAR), alpha, this->get_param(this->NUM_SHEAR+2));}
-		void set_geometry(double rad, double layer = 0.) { set_param(this->NUM_GEOMT, rad); set_param(this->NUM_GEOMT+1, rad+layer);}
+		void set_geometry(double rad, double layer = 0.) { this->set_param(this->NUM_GEOMT, rad); this->set_param(this->NUM_GEOMT+1, rad+layer);}
 //...результаты решения задачи;
 		void GetFuncAllValues(double X, double Y, double Z, T * F, int id_block, Num_Value id_F, int id_variant = 0, int iparam = 0);
 //...аналитические модели (течение Бринкмана);
@@ -3677,11 +3677,11 @@ Num_State CHydro3D<T>::computing_header(Num_Comput Num)
 //...добавляем блоки на периодических связях и на границе включений;
 	if (this->solv%ENERGY_SOLVING == PERIODIC_SOLVING) { 
 		double par[6]; this->SetGeomBounding(par);
-		for (k = 0; k < this->N; k++) SkeletonBounding(this->B[k], par);
+		for (k = 0; k < this->N; k++) this->SkeletonBounding(this->B[k], par);
 		for (k = 0; k < this->N; k++) if (this->B[k].link) {
-			for (i = 0; i < this->B[k].link[0]; i++) if ((elem = geom_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) 
+			for (i = 0; i < this->B[k].link[0]; i++) if ((elem = this->geom_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) 
 			this->solver.add_link(k, elem);
-			for (i = 0; i < this->B[k].link[0]; i++) if ((elem = block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) 
+			for (i = 0; i < this->B[k].link[0]; i++) if ((elem = this->block_plink_3D(this->B[k], l = i, id_dir, par)) >= 0) 
 			this->solver.add_link(k, elem);
 		}
 	}

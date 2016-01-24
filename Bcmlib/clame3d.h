@@ -151,8 +151,6 @@ public:
 		void rdivrf_matrix(double ** T, int n, int shift_m = 0, int shift_n = 0, double f = 1.);
 		void unit_f_matrix(double ** T, int n, int shift_m = 0, int shift_n = 0, double f = 1.);
 		void toreal_matrix(double ** T, int n, int shift_m = 0, int shift_n = 0);
-		void grdivf_forwrd(double ** T, int n, int shift_m = 0, int shift_n = 0, double f = 1.);
-		void toreal_forwrd(double ** T, int n, int shift_m = 0, int shift_n = 0);
 		void grdivf_transf(double ** T, int n, int shift_m = 0, int shift_n = 0, double f = 1.);
 		void toreal_transf(double ** T, int n, int shift_m = 0, int shift_n = 0);
 //...algorithm of junction on spherical inclusion;

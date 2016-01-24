@@ -387,7 +387,7 @@ void Inp_elements_add(char * ch_NODES, CGrid * nd, int * ID_elements, int ID_par
 								swap(pchar[0], temp); fprintf(INP, "*Elset, elset=%s_add, generate", one_line);
 								swap(pchar[0], temp); fprintf(INP, "%s", pchar);
 							}
-							fprintf(INP, "", pchar);  i = nd->cond_ptr[nd->cond[0]-N_set];
+							fprintf(INP, "%s", pchar); /*!!! was "", now "%s" ???*/ i = nd->cond_ptr[nd->cond[0]-N_set];
 							fprintf(INP, "%7i,%7i,%7i\n", -nd->geom[nd->geom_ptr[nd->cond[i+3]]+3], -nd->geom[nd->geom_ptr[nd->cond[i+4]]+3], nd->cond[i+5]);					
 							N_set--;
 						}
