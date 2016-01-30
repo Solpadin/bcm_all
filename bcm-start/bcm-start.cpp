@@ -1,6 +1,6 @@
 // bcm-start.cpp : Defines the entry points for the console application
 //
-#define ___MPI_INIT___ 
+#define ___nMPI_INIT___ 
 #define ___nIGROUPS_NGROUPS___
 #ifdef  ___MPI_INIT___
 #include "mpi.h"
@@ -110,7 +110,8 @@ double rigid_approx(double t, double E1_max, double E2_max, double E_min, double
 #define n_TEST_DRAFT_LAME_ESHELBY_INTERMEDIATE_PHASE_layer
 #define n_TEST_DRAFT_LAME_ESHELBY
 #define n_LAME3D_LAYERED_ESHELBY_HOMOGENIZATION
-#define n_ESHELBY_CALCULATIONS
+#define n_ESHELBY_3D_CALCULATIONS
+#define ESHELBY_2D_CALCULATIONS
 #define n_ALUMO_COMPOSITES_CALCULATIONS
 #define n_ALUMO_COMPOSITES_EXAMPLES
 #define n_WSMP_COMPOSITE_CALCULATION
@@ -8073,7 +8074,7 @@ int N_spinel = 2;
 	delete sm;
 }
 #endif
-#ifdef ESHELBY_CALCULATIONS
+#ifdef ESHELBY_3D_CALCULATIONS
 {
 //////////////////////////
 //...model initialization;
@@ -8117,6 +8118,61 @@ int N_spinel = 2;
 	double nju2 = 0.31, //...жесткое включение;  
 			 //E2   = 225., //...модуль Юнга жесткого матрицы (GPa), Т = 20С;
 			 //E2   = 215., //...модуль Юнга жесткого матрицы (GPa), Т = 600С;
+			 E2   = 180.,  //...модуль Юнга жесткого матрицы (GPa), Т = 1400/1300С;
+			 l2	= 0.005,  //...масштабный параметр включений (мкм);
+			 l2_dop	= 0., //...interphase layer_dop;
+			 rad = 0.025,   //...характерный радиус включений (мкм); 
+			 c0  = 0.035,  //...предельная концентрация включений; 
+			 G1, G2, GH = 0., KH, G0, K0, EH, nuH, E0, nu0, ff, ll;
+	yes = 0;
+
+///////////////////////////////  
+//...цикл по параметрам задачи;
+	FILE * TST = fopen("mindl3D_homog.dat", "w");
+	for (int j = 0; j <= 500; j += 1) {
+		ff = 0.02+j*.00003; ll = 10./*(l1/rad)*/;
+	//for (int j = 1; j <= 2000; j += 1) {
+	//	ll = (j*.0005)*10.; ff = c0;
+		sm->set_fasa_hmg(nju1, nju2, G1 = E1/(1.+nju1)*.5, G2 = E2/(1.+nju2)*.5, ll, l1_dop = (l1_dop/rad)/sqrt(1.-2.*nju1), (l2/rad), l2_dop = (l2_dop/rad)/sqrt(1.-2.*nju2), AA, BB);
+		el->set_fasa_hmg(nju1, nju2, G1, G2);
+
+		KH = sm->TakeEshelby_volm_two (ff);
+		GH = sm->TakeEshelby_shear_two(ff);
+
+		K0 = el->TakeEshelby_volm_two (ff);
+		G0 = el->TakeEshelby_shear_two(ff);
+
+		EH = 9.*KH*fabs(GH)/(3.*KH+fabs(GH));
+		E0 = 9.*K0*G0/(3.*K0+G0);
+
+		nuH = (3.*KH-2.*fabs(GH))/(3.*KH+fabs(GH))*.5;
+		nu0 = (3.*K0-2.*G0)/(3.*K0+G0)*.5;
+
+  		fprintf(TST, " l1 = %g,  l1_dop = %g, l2 = %g,  l2_dop = %g, A = %g, B = %g, c0 = %g, KH = %g, K0 = %g, GH = %g, G0 = %g, EH = %g, E0 = %g, nuH = %g, nu0 = %g\n", 
+				ll, l1_dop, (l2/rad), l2_dop, AA, BB, ff, KH, K0, GH, G0, EH, E0, nuH, nu0);
+	}
+	fclose (TST);
+	delete sm;
+	delete el;
+}
+#endif
+#ifdef ESHELBY_2D_CALCULATIONS
+{
+//////////////////////////
+//...model initialization;
+	CDraft<double> * sm = CreateDraftR(COHES2D_DRAFT, 8),
+						* el = CreateDraftR(LAME2D_DRAFT,  8);
+///////////////////////////////////////////////////////////
+//...данные для расчетов с дисперсными частицами - ВКНА-1У;
+	double nju1 = 0.33, //...полимерная матрица;
+			 E1   = 40.,  //...модуль Юнга полимерной матрицы (GPa), Т = 1400/1300С;
+			 AA	= E1*.0,			 //...adhegion parameter;
+			 BB	= E1*.5/(1.+nju1)*.0,//...adhegion parameter;
+			 l1	= 15.,  //...масштабный параметр матрицы (мкм), Т = 20С;
+			 l1_dop = 0.; //...interphase layer_dop;
+///////////////////////////////////////////////////////////
+////...данные для расчетов с дисперсными частицами - Y2O3;
+	double nju2 = 0.31, //...жесткое включение;  
 			 E2   = 180.,  //...модуль Юнга жесткого матрицы (GPa), Т = 1400/1300С;
 			 l2	= 0.005,  //...масштабный параметр включений (мкм);
 			 l2_dop	= 0., //...interphase layer_dop;
