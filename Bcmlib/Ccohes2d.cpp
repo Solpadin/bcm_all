@@ -1777,8 +1777,43 @@ double CCohes2D::TakeLayer_G1(double ff)
 	return(GG_eff);
 }
 
+/////////////////////////////////////////////////
+//...реализация регулярных масштабных множителей;
+void scale_regul(double R, double kappa, double hh[3], double eps = 1e-14, int k_limit = 200)
+{
+	int k = 0;
+	double dd = sqr(.5*R*kappa), f = 1., g = sqr(kappa)*.5; 
+	hh[0] = f; hh[1] = g;
+	do {
+		k += 1;
+		f *= dd / sqr(k);
+		g *= dd / (k*(k + 1));
+		hh[0] += f;
+		hh[1] += g;
+	} while (f >= eps && g >= eps && k < k_limit);
+	hh[2] = (sqr(kappa)*hh[0] - 2.*hh[1]);
+}
+
+////////////////////////////./////////////////////
+//...реализация сингулярных масштабных множителей;
+void scale_irreg(double R, double kappa, double hh[3], double eps = 1e-14, int k_limit = 200)
+{
+	int k = 0;
+	double h = -log(sqr(R)), dd = sqr(.5*R*kappa), f = 1., g = sqr(kappa)*.5;
+	hh[0] = h; hh[1] = -2./sqr(R)+g*h;
+	do {
+		k += 1;
+		f *= dd / sqr(k);
+		g *= dd / (k*(k + 1));
+		h += 1. / k;
+		hh[0] += f*h;
+		hh[1] += g*h;
+	} while (f*fabs(h) >= eps && f*fabs(h) >= eps && k < k_limit);
+	hh[2] = (sqr(kappa)*hh[0] - 2.*hh[1]);
+}
+
 ////////////////////////////////////////////////////////////////////
-//...трехфазная модель для сферического включения (прямой алгоритм);
+//...трехфазная модель для цилиндрического включения (прямой алгоритм);
 double CCohes2D::TakeEshelby_volm_two(double ff)
 {
 	double mu_I = get_param(NUM_SHEAR+NUM_SHIFT), nu_I = get_param(NUM_SHEAR+1+NUM_SHIFT),
@@ -1789,15 +1824,20 @@ double CCohes2D::TakeEshelby_volm_two(double ff)
 	if (C_I == 0. || C_M == 0.) { //...классическая трехфазная модель;
 		return(K_M+ff*(K_I-K_M)/(1.+(1.-ff)*(K_I-K_M)/(K_M+mu_M)));
 	}
-	double ku_I = (1.-nu_I)/(.5-nu_I)*mu_I,
-			 ku_M = (1.-nu_M)/(.5-nu_M)*mu_M, RR2 = 1./pow(ff, 1./3.), 
-			 kk_I = sqrt(C_I/ku_I), tt_I = exp(-2.*kk_I),
-			 kk_M = sqrt(C_M/ku_M), tt_D = exp(kk_M*(RR2-1.)),
-			 HH1  = ((1.+tt_I)*kk_I-(1.-tt_I))*.5, //...вычисление функций надо организовать !!!
-			 HH2  = ((1.-tt_I)*(sqr(kk_I)+3.)-3.*(1.+tt_I)*kk_I)*.5,
-			 JJP1 =  (kk_M-1.), JJP2 = ((sqr(kk_M)+3.)-3.*kk_M), JHP1 =  (kk_M*RR2-1.)*ff*tt_D, 
-			 JJM1 = -(kk_M+1.), JJM2 = ((sqr(kk_M)+3.)+3.*kk_M), JHM1 = -(kk_M*RR2+1.)*ff/tt_D,
-			 matr[7][8] = {
+	double ku_I = (1.-nu_I)/(.5-nu_I)*mu_I, kk_I = sqrt(C_I/ku_I),
+			 ku_M = (1.-nu_M)/(.5-nu_M)*mu_M, kk_M = sqrt(C_M/ku_M), RR2 = 1./sqrt(ff), hh[3];
+	scale_regul(1., kk_I, hh);
+	double HH1 = hh[1], HH2 = hh[2];
+
+	scale_regul(1., kk_M, hh);
+	double JJP1 = hh[1], JJP2 = hh[2], JHP1;
+
+	scale_irreg(1., kk_M, hh);
+	double JJM1 = hh[1], JJM2 = hh[2], JHM1;
+
+	scale_regul(RR2, kk_M, hh); JHP1 = hh[1];
+	scale_irreg(RR2, kk_M, hh); JHM1 = hh[1];
+	double matr[7][8] = {
 					{ 1., -HH1, -1., -1., JJP1, JJM1, 0., 0.},
 					{ 0., -HH2,  0.,  2., JJP2, JJM2, 0., 0.},
 					{ AA, -ku_I*HH1-AA*(HH2+HH1), 0.,0., ku_M*JJP1, ku_M*JJM1, 0., 0.},
@@ -1842,5 +1882,263 @@ double CCohes2D::TakeEshelby_volm_two(double ff)
 			}
 	}
 	return(matr[6][7]);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//...трехфазная модель для сферического включения (итерационный алгоритм);
+double CCohes2D::TakeEshelby_shear_two(double c0, double eps, int max_iter)
+{
+	//double mu_I = double(get_param(NUM_SHEAR + NUM_SHIFT)), nu_I = double(get_param(NUM_SHEAR + 1 + NUM_SHIFT)),
+	//	mu_M = double(get_param(NUM_SHEAR)), nu_M = double(get_param(NUM_SHEAR + 1)),
+	//	K1 = 2.*mu_I*(1. + nu_I) / (3. - 6.*nu_I), K3 = 2.*mu_M*(1. + nu_M) / (3. - 6.*nu_M), ff = double(c0),
+	//	KH = K3 + ff*(K1 - K3) / (1. + (1. - ff)*(K1 - K3) / (K3 + 4. / 3.*mu_M)),
+	//	RR2 = 1. / pow(ff, 1. / double(3.)), fR2 = RR2*RR2, fR5 = ff / fR2,
+	//	mu_MI = mu_M / mu_I, AA = double(get_param(NUM_ADHES)) / mu_I, BB = double(get_param(NUM_ADHES + 1)) / mu_I,
+	//	ku_I = (1. - nu_I) / (.5 - nu_I)*mu_I,
+	//	ku_M = (1. - nu_M) / (.5 - nu_M)*mu_M,
+	//	QI1 = 3.*nu_I / (7. - 4.*nu_I),
+	//	QM1 = 3.*nu_M / (7. - 4.*nu_M),
+	//	QI2 = (7. + 2.*nu_I) / (7. - 4.*nu_I),
+	//	QM2 = (7. + 2.*nu_M) / (7. - 4.*nu_M),
+	//	QM3 = 2.*(1. - 2.*nu_M) / (5. - 4.*nu_M),
+	//	QM4 = 2.*(5. - nu_M) / (5. - 4.*nu_M),
+	//	QM5 = 2.*(1. + nu_M) / (5. - 4.*nu_M), optim, sgn0, sgn1, nu_H, mu_HM, mu_HM0, mu_HM1, matrix[14][15],
+	//	matr[14][15] = {
+	//		{ 1., -2.*QI1, 0., 0., -1., -1., -3., 2.*QM1, 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 1., -1.,		0., 0., -1., -QM3, 2., 1., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 1., -6.*QI1, 0., 0., -1., 2., 12., 6.*QM1, 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 1., -3.,		0., 0., -1., 2.*QM3, -8., 3., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ AA, -6.*QI1*AA,			0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ BB, -3.*BB,				0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 2.*mu_I,  2.*mu_I*QI1, 0., 0., -2.*mu_M,  2.*mu_M*QM4,  24.*mu_M, -2.*mu_M*QM1, 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 2.*mu_I, -2.*mu_I*QI2, 0., 0., -2.*mu_M, -2.*mu_M*QM5, -16.*mu_M,  2.*mu_M*QM2, 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0. },
+	//		{ 0., 0., 0., 0., 1.,      ff,   3.*fR5, -2.*QM1*fR2, 0., 0., 0., 0., -3., -1., 1. }, //...нормировку по радиусу в последних коэффициентах можно убрать!!!
+	//		{ 0., 0., 0., 0., 1.,  QM3*ff,  -2.*fR5,        -fR2, 0., 0., 0., 0.,  2., -1., 1. },
+	//		{ 0., 0., 0., 0., 1., -QM4*ff, -12.*fR5,     QM1*fR2, 0., 0., 0., 0., 12.,  1., 1. },
+	//		{ 0., 0., 0., 0., 1.,  QM5*ff,   8.*fR5,    -QM2*fR2, 0., 0., 0., 0., -8., -1., 1. },
+	//};
+	//int k_iter = 0, k = 0, l;
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	////...дописываем когезионную часть в матрице (A0, D0, A*0, D*0, A1, B1, C1, D1, A*1, B*1, C*1, D*1, C2, B2);
+	//double C_I = get_param(NUM_SHEAR - 1 + NUM_SHIFT), kk_I = sqrt(C_I / ku_I), tt_I = exp(-2.*kk_I),
+	//	C_M = get_param(NUM_SHEAR - 1), kk_M = sqrt(C_M / ku_M), tt_D = exp(kk_M*(RR2 - 1.)),
+	//	HH1 = ((1. + tt_I)*kk_I - (1. - tt_I))*.5,
+	//	HH2 = ((1. - tt_I)*(sqr(kk_I) + 3.) - 3.*(1. + tt_I)*kk_I)*.5,
+	//	JJP1 = (kk_M - 1.), JJP2 = ((sqr(kk_M) + 3.) - 3.*kk_M),
+	//	JJM1 = -(kk_M + 1.), JJM2 = ((sqr(kk_M) + 3.) + 3.*kk_M),
+	//	JHP1 = (kk_M*RR2 - 1.)*ff*tt_D, JHP2 = ((sqr(kk_M*RR2) + 3.) - 3.*kk_M*RR2)*fR5*tt_D,
+	//	JHM1 = -(kk_M*RR2 + 1.)*ff / tt_D, JHM2 = ((sqr(kk_M*RR2) + 3.) + 3.*kk_M*RR2)*fR5 / tt_D,
+	//	kp_I = sqrt(C_I / mu_I), tp_I = exp(-2.*kp_I),
+	//	kp_M = sqrt(C_M / mu_M), tp_D = exp(kp_M*(RR2 - 1.)),
+	//	HP1 = ((1. + tp_I)*kp_I - (1. - tp_I))*.5,
+	//	HP2 = ((1. - tp_I)*(sqr(kp_I) + 3.) - 3.*(1. + tp_I)*kp_I)*.5,
+	//	JPP1 = (kp_M - 1.), JPP2 = ((sqr(kp_M) + 3.) - 3.*kp_M),
+	//	JPM1 = -(kp_M + 1.), JPM2 = ((sqr(kp_M) + 3.) + 3.*kp_M),
+	//	JDP1 = (kp_M*RR2 - 1.)*ff*tp_D, JDP2 = ((sqr(kp_M*RR2) + 3.) - 3.*kp_M*RR2)*fR5*tt_D,
+	//	JDM1 = -(kp_M*RR2 + 1.)*ff / tp_D, JDM2 = ((sqr(kp_M*RR2) + 3.) + 3.*kp_M*RR2)*fR5 / tt_D;
+	//////////////////////////////////////////////
+	////...заполняем строки когезионной матрицы;
+	//matr[0][2] = -3.*HP2 / C_I; 	//...сшивка функций;
+	//matr[0][3] = 3.*HH2 / C_I - HH1 / ku_I;
+	//matr[0][8] = 3.*JPP2 / C_M;
+	//matr[0][9] = 3.*JPM2 / C_M;
+	//matr[0][10] = JJP1 / ku_M - 3.*JJP2 / C_M;
+	//matr[0][11] = JJM1 / ku_M - 3.*JJM2 / C_M;
+
+	//matr[1][2] = 2.*HP2 / C_I - HP1 / mu_I;
+	//matr[1][3] = -2.*HH2 / C_I;
+	//matr[1][8] = JPP1 / mu_M - 2.*JPP2 / C_M;
+	//matr[1][9] = JPM1 / mu_M - 2.*JPM2 / C_M;
+	//matr[1][10] = 2.*JJP2 / C_M;
+	//matr[1][11] = 2.*JJM2 / C_M;
+
+	////...сшивка нормальных производных;
+	//matr[2][2] = -3.*(HP1 / mu_I - 4.*HP2 / C_I);
+	//matr[2][3] = -(HH2 - 2.*HH1) / ku_I - 12.*HH2 / C_I;
+	//matr[2][8] = 3.*(JPP1 / mu_M - 4.*JPP2 / C_M);
+	//matr[2][9] = 3.*(JPM1 / mu_M - 4.*JPM2 / C_M);
+	//matr[2][10] = (JJP2 - 2.*JJP1) / ku_M + 12.*JJP2 / C_M;
+	//matr[2][11] = (JJM2 - 2.*JJM1) / ku_M + 12.*JJM2 / C_M;
+
+	//matr[3][2] = -(HP2 - HP1) / mu_I - 8.*HP2 / C_I;
+	//matr[3][3] = -2.*(HH1 / ku_I - 4.*HH2 / C_I);
+	//matr[3][8] = (JPP2 - JPP1) / mu_M + 8.*JPP2 / C_M;
+	//matr[3][9] = (JPM2 - JPM1) / mu_M + 8.*JPM2 / C_M;
+	//matr[3][10] = 2.*(JJP1 / ku_M - 4.*JJP2 / C_M);
+	//matr[3][11] = 2.*(JJM1 / ku_M - 4.*JJM2 / C_M);
+
+	////...сшивка моментов;
+	//matr[4][2] = -ku_I*3.*HP2 / C_I - AA*3.*(HP1 / mu_I - 4.*HP2 / C_I);
+	//matr[4][3] = -ku_I*(HH1 / ku_I - 3.*HH2 / C_I) - AA*((HH2 - 2.*HH1) / ku_I + 12.*HH2 / C_I);
+	//matr[4][8] = ku_M*3.*JPP2 / C_M;
+	//matr[4][9] = ku_M*3.*JPM2 / C_M;
+	//matr[4][10] = ku_M*(JJP1 / ku_M - 3.*JJP2 / C_M);
+	//matr[4][11] = ku_M*(JJM1 / ku_M - 3.*JJM2 / C_M);
+
+	//matr[5][2] = -mu_I*(HP1 / mu_I - 2.*HP2 / C_I) - BB*((HP2 - HP1) / mu_I + 8.*HP2 / C_I);
+	//matr[5][3] = -mu_I*2.*HH2 / C_I - BB*2.*(HH1 / ku_I - 4.*HH2 / C_I);
+	//matr[5][8] = mu_M*(JPP1 / mu_M - 2.*JPP2 / C_M);
+	//matr[5][9] = mu_M*(JPM1 / mu_M - 2.*JPM2 / C_M);
+	//matr[5][10] = mu_M*2.*JJP2 / C_M;
+	//matr[5][11] = mu_M*2.*JJM2 / C_M;
+
+	////...новый вариант: антисимметричный, симметрия по второму и третьему индексам;
+	//matr[6][2] = -9.*((ku_I - mu_I)*HP1 / (6.*mu_I) - ku_I*HP2 / C_I);
+	//matr[6][3] = ((mu_I + 2.*ku_I)*HH1 / ku_I - 9.*ku_I*HH2 / C_I);
+	//matr[6][8] = 9.*((ku_M - mu_M)*JPP1 / (6.*mu_M) - ku_M*JPP2 / C_M);
+	//matr[6][9] = 9.*((ku_M - mu_M)*JPM1 / (6.*mu_M) - ku_M*JPM2 / C_M);
+	//matr[6][10] = -(mu_M + 2.*ku_M)*JJP1 / ku_M + 9.*ku_M*JJP2 / C_M;
+	//matr[6][11] = -(mu_M + 2.*ku_M)*JJM1 / ku_M + 9.*ku_M*JJM2 / C_M;
+
+	//matr[7][2] = (5.*mu_I + ku_I)*HP1 / (2.*mu_I) - 2.*(4.*mu_I - ku_I)*HP2 / C_I;
+	//matr[7][3] = (ku_I - mu_I)*HH1 / ku_I + 2.*(4.*mu_I - ku_I)*HH2 / C_I;
+	//matr[7][8] = -(5.*mu_M - ku_M)*JPP1 / (2.*mu_M) + 2.*(4.*mu_M - ku_M)*JPP2 / C_M;
+	//matr[7][9] = -(5.*mu_M - ku_M)*JPM1 / (2.*mu_M) + 2.*(4.*mu_M - ku_M)*JPM2 / C_M;
+	//matr[7][10] = -((ku_M - mu_M)*JJP1 / ku_M + 2.*(4.*mu_M - ku_M)*JJP2 / C_M);
+	//matr[7][11] = -((ku_M - mu_M)*JJM1 / ku_M + 2.*(4.*mu_M - ku_M)*JJM2 / C_M);
+
+	////...равенство нулю когезионного поля;
+	//matr[8][8] = 3.*JDP2 / C_M;
+	//matr[8][9] = 3.*JDM2 / C_M;
+	//matr[8][10] = JHP1 / ku_M - 3.*JHP2 / C_M;
+	//matr[8][11] = JHM1 / ku_M - 3.*JHM2 / C_M;
+
+	//matr[9][8] = JDP1 / mu_M - 2.*JDP2 / C_M;
+	//matr[9][9] = JDM1 / mu_M - 2.*JDM2 / C_M;
+	//matr[9][10] = 2.*JHP2 / C_M;
+	//matr[9][11] = 2.*JHM2 / C_M;
+
+	///////////////////////////////////////////////
+	////...цикл по определению сдвиговой жесткости;
+	//mu_HM0 = 0.;
+	//nu_H = (1.5*KH - mu_HM0*mu_M) / (3.*KH + mu_HM0*mu_M);
+	//for (k = 0; k < 14; k++)
+	//	for (l = 0; l < 15; l++) matrix[k][l] = matr[k][l];
+	//optim = take_system_E(matrix, mu_HM0, nu_H);
+	//if (optim > 0.) sgn0 = 1.; else sgn0 = -1.;
+
+	//mu_HM1 = 1.5*KH / mu_M;
+	//do {
+	//	mu_HM1 *= 10.; k_iter++;
+	//	nu_H = (1.5*KH - mu_HM1*mu_M) / (3.*KH + mu_HM1*mu_M);
+	//	for (k = 0; k < 14; k++)
+	//		for (l = 0; l < 15; l++) matrix[k][l] = matr[k][l];
+	//	optim = take_system_E(matrix, mu_HM1, nu_H);
+	//} while (optim*sgn0 > 0. && k_iter < max_iter); k_iter = 0;
+
+	//if (optim > 0.) sgn1 = 1.; else sgn1 = -1.;
+	//do {
+	//	mu_HM = (mu_HM0 + mu_HM1)*.5; k_iter++;
+	//	nu_H = (1.5*KH - mu_HM*mu_M) / (3.*KH + mu_HM*mu_M);
+	//	for (k = 0; k < 14; k++)
+	//		for (l = 0; l < 15; l++)	matrix[k][l] = matr[k][l];
+	//	optim = take_system_E(matrix, mu_HM, nu_H);
+	//	if (optim*sgn0 > 0.) mu_HM0 = mu_HM; else
+	//		if (optim*sgn0 < 0.) mu_HM1 = mu_HM; else mu_HM0 = mu_HM1 = mu_HM;
+	//} while (fabs(mu_HM1 - mu_HM0) > eps && k_iter < max_iter);
+	//mu_HM = (mu_HM0 + mu_HM1)*.5;
+
+	//if (sgn0*sgn1 > 0. || fabs(optim) > 1e-6) mu_HM = -mu_HM;
+	//return mu_HM*mu_M;
+	return 0.;
+}
+double CCohes2D::TakeCrack_two(double X, double Y, double kappa, double * AA, double * BB, double * AD, double * BD, int max_iter)
+{
+	if (X < 0) X = -X; 
+	if (AA && BB && AD && BD) {
+		complex w = comp(X, Y), z = w*w-1., PP, QQ, PD, QD, FF, FF_dop;
+
+//////////////////////////////////////////////////////
+//...вычисляем отображение (прямое и вспомогательное);
+		double fi = arg2(2.*X*Y, X*X-Y*Y-1.)*.5, rr = sqrt(sqrt(sqr(X*X-Y*Y-1)+sqr(2.*X*Y))),
+			arch_re = log(sqr(X+rr*cos(fi))+sqr(Y+rr*sin(fi))), fi2 = arg2(Y+rr*sin(fi), X+rr*cos(fi)), f_dop, RR,
+			f = kappa, sum = 0.;
+		FF = comp(rr*cos(fi), rr*sin(fi));
+
+		AA[0] = BD[0] = 1.;
+		if (0)
+		for (int j = 0; j <= max_iter; j++) {
+			PP = QQ = PD = QD = 0.;
+////////////////////////////////////////
+//...схема Горнера вычисления полиномов;
+			PP = (AA[j] /= (2.*(j+1.)))+PP*z;
+			for (int k = j-1; k >= 0; k--) {
+				QQ = (BB[k+1] = BB[k]/(2.*(k+1.)))+QQ*z;
+				PP = (AA[k] = (AA[k]-BB[k+1]-(2.*k+3.)*AA[k+1])/(2.*(k+1.)))+PP*z;
+			}
+			QQ = (BB[0] = -AA[0])+QQ*z;
+			PP = PP*w;
+
+///////////////////////////////////////////////////////
+//...схема Горнера вычисления дополнительных полиномов;
+			QD = (BD[j] /= (2.*j+1.))+QD*z;
+			for (int k = j-1; k >= 0; k--) {
+				QD = (BD[k] = (BD[k]-2.*(k+1.)*BD[k+1])/(2.*k+1.))+QD*z;
+				PD = (AD[k+1] = (AD[k]-BD[k+1])/(2.*k+3.))+PD*z;
+			}
+			PD = (AD[0] = -BD[0])+PD*z;
+			QD = QD*w;
+
+///////////////////////////////
+//...вычисляем вклад в решение;
+			sum += f*imag(conj(QD)*PP*FF+QQ*conj(PD*FF)+arch_re*conj(QD)*QQ);
+			//sum += imag(f*conj(QD)*QQ*FF);
+			f *= kappa;
+
+////////////////////////////////////////
+//...следующий шаг вычисления полиномов;
+			PP = QQ = PD = QD = 0.;
+
+////////////////////////////////////////
+//...схема Горнера вычисления полиномов;
+			PP = (AA[j+1] = AA[j]/(2.*j+3.))+PP*z;
+			QQ = (BB[j] /= (2.*j+1.))+QQ*z;
+			for (int k = j-1; k >= 0; k--) {
+				PP = (AA[k+1] = (AA[k]-BB[k+1])/(2.*k+3.))+PP*z;
+				QQ = (BB[k] = (BB[k]-2.*(k+1.)*BB[k+1])/(2.*k+1.))+QQ*z;
+			}
+			PP = (AA[0] = -BB[0])+PP*z;
+			QQ = QQ*w;
+
+///////////////////////////////////////////////////////
+//...схема Горнера вычисления дополнительных полиномов;
+			QD = (BD[j+1] = BD[j]/(2.*(j+1.)))+QD*z;
+			PD = (AD[j] = (AD[j]-BD[j+1])/(2.*(j+1.)))+PD*z;
+			for (int k = j-1; k >= 0; k--) {
+				QD = (BD[k+1] = BD[k]/(2.*(k+1.)))+QD*z;
+				PD = (AD[k] = (AD[k]-BD[k+1]-(2.*k+3.)*AD[k+1])/(2.*(k+1.)))+PD*z;
+			}
+			QD = (BD[0] = -AD[0])+QD*z;
+			PD = PD*w;
+
+/////////////////////////////// 
+//...вычисляем вклад в решение;
+			sum += f*imag(conj(QD)*PP*FF+QQ*conj(PD*FF)+arch_re*conj(QD)*QQ);
+			//sum += imag(f*conj(QD)*QQ*FF);
+			f *= kappa;
+		}
+
+//////////////////////////////////////////////////////
+//...реализация решения на основе функции Макдональда;
+		double eps = 1e-18;
+		fi = arg2(Y, X)*.5; rr = sqrt(RR = sqr(X)+sqr(Y));
+		FF_dop = comp(rr*cos(fi), -rr*sin(fi));
+		if (rr) FF = comp(1./rr*cos(fi), -1./rr*sin(fi));
+		else	  FF = comp(0.);
+		sum += imag(FF)-imag(FF_dop); 
+		f = f_dop = 1.; RR *= .25;
+		int k = 0;
+		do {
+			k += 1;
+			f *= RR/(k*(-.5+k-1.));
+			f_dop *= RR/(k*(.5+k-1.));
+			sum += imag(FF)*f-imag(FF_dop)*f_dop;
+		} 
+		while (fabs(f) >= eps && fabs(f_dop) >= eps && k < max_iter);
+		return(sum);
+	}
+	return(0.);
 }
 #undef  Message

@@ -60,7 +60,9 @@ public:
 		double TakeLayer_G1	(double ff);
 //...прямые аналитические методы;
 		double TakeEshelby_volm_two (double ff);
-		//double TakeEshelby_shear_two(double ff, double eps = EE, int max_iter = 100);
+		double TakeEshelby_shear_two(double ff, double eps = EE, int max_iter = 100);
+//...конечная трещина;
+		double TakeCrack_two(double X, double Y, double kappa, double * AA, double * BB, double * AD, double * BD, int max_iter = 100);
 };
 
 /////////////////////////////////////////////////

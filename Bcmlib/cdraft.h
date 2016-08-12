@@ -596,6 +596,7 @@ public:
 		virtual double TakeLayer_GG(int N, double * ff, double * mu, double * nj)								  { return 0.;}
 		virtual double TakeLayer_GG(int N, double * ff, double * kk, double * mu, double eps = EE, int max_iter = 100) { return 0.;}
 		virtual double TakeLayer_GG(int N, double * ff, double * kp, double * mu, double * nj, double eps = EE, int max_iter = 100) { return 0.;}
+		virtual double TakeCrack_two(double X, double Y, double kappa, double * AA, double * BB, double * AD, double * BD, int max_iter = 100) { return 0.; }
 //...функция пересчета полей (температур) согласно схеме установления;
 		virtual void TakeStabStep(double * Temp, int NN, double alpha){};
 		virtual void TakeStabStep_layer(double * Temp, int N_SC, int N_CU, int N_cells, double alpha){};

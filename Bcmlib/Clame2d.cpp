@@ -2036,4 +2036,14 @@ double CLame2D::TakeLayer_G2(double ff)
 			 G2 = get_param(NUM_SHEAR+NUM_SHIFT);
 	return(1./(ff/G2+(1.-ff)/G1));
 }
+
+/////////////////////////////////////////////////
+//...трехфазная модель для сферических включений;
+double CLame2D::TakeEshelby_volm_two(double ff)
+{
+	double K1 = get_param(NUM_SHEAR+NUM_SHIFT)/(1.-2.*get_param(NUM_SHEAR+1+NUM_SHIFT)),
+			 K3 = get_param(NUM_SHEAR)/(1.-2.*get_param(NUM_SHEAR+1)),
+			 KH = K3+ff*(K1-K3)/(1.+(1.-ff)*(K1-K3)/(K3+get_param(NUM_SHEAR)));
+	return(KH);
+}
 #undef  Message

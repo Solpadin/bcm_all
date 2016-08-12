@@ -66,7 +66,7 @@ public:
 		double TakeLayer_G1(double ff);
 		double TakeLayer_G2(double ff);
 		double TakeEshelby_volm	   (double ff, double ff_l) {return 0.;};
-		double TakeEshelby_volm_two(double ff) {return 0.;};
+		double TakeEshelby_volm_two(double ff);
 };
 
 ////////////////////////////////// 

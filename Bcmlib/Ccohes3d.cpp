@@ -152,22 +152,22 @@ err:
 ////////////////////////////////////////////////////////////////////
 //...трехфазная модель для сферического включения (прямой алгоритм);
 double CCohes3D::TakeEshelby_volm_two(double c0)
-                                {
+{
 	real_T mu_I = real_T(get_param(NUM_SHEAR+NUM_SHIFT)), nu_I = real_T(get_param(NUM_SHEAR+1+NUM_SHIFT)),
 			 mu_M = real_T(get_param(NUM_SHEAR)), nu_M = real_T(get_param(NUM_SHEAR+1)),
 			 C_I = real_T(get_param(NUM_SHEAR-1+NUM_SHIFT)), ff = real_T(c0), 
 			 C_M = real_T(get_param(NUM_SHEAR-1)), AA = real_T(get_param(NUM_ADHES)),
-			 K_I = 2.*mu_I*(1.+nu_I)/(3.-6.*nu_I), K_M = 2.*mu_M*(1.+nu_M)/(3.-6.*nu_M);	if (C_I == 0. || C_M == 0.) { //...классическая трехфазная модель;
+			 K_I = 2.*mu_I*(1.+nu_I)/(3.-6.*nu_I), K_M = 2.*mu_M*(1.+nu_M)/(3.-6.*nu_M);	if (/*C_I == 0. || */C_M == 0.) { //...классическая трехфазная модель;
 		return to_double(K_M+ff*(K_I-K_M)/(1.+(1.-ff)*(K_I-K_M)/(K_M+4./3.*mu_M)));
 	}
 	real_T ku_I = (1.-nu_I)/(.5-nu_I)*mu_I,
 			 ku_M = (1.-nu_M)/(.5-nu_M)*mu_M, RR2 = 1./pow(ff, 1./real_T(3.)), 
-			 kk_I = sqrt(C_I/ku_I), tt_I = exp(-2.*kk_I),
-			 kk_M = sqrt(C_M/ku_M), tt_D = exp(kk_M*(RR2-1.)),
+			 kk_I = ku_I ? sqrt(C_I/ku_I) : 0., tt_I = exp(-2.*kk_I),
+			 kk_M = sqrt(C_M/ku_M), tt_M = exp(-2.*kk_M), tt_D = exp(-2.*kk_M*RR2),
 			 HH1  = ((1.+tt_I)*kk_I-(1.-tt_I))*.5, 
 			 HH2  = ((1.-tt_I)*(sqr(kk_I)+3.)-3.*(1.+tt_I)*kk_I)*.5,
-			 JJP1 =  (kk_M-1.), JJP2 = ((sqr(kk_M)+3.)-3.*kk_M), JHP1 =  (kk_M*RR2-1.)*ff*tt_D, 
-			 JJM1 = -(kk_M+1.), JJM2 = ((sqr(kk_M)+3.)+3.*kk_M), JHM1 = -(kk_M*RR2+1.)*ff/tt_D,
+			 JJP1 = ((1.+tt_M)*kk_M-(1.-tt_M))*.5, JJP2 = ((1.-tt_M)*(sqr(kk_M)+3.)-3.*(1.+tt_M)*kk_M)*.5, JHP1 = ((1.+tt_D)*kk_M-(1.-tt_D))*.5, 
+			 JJM1 = ((1.-tt_M)*kk_M-(1.+tt_M))*.5, JJM2 = ((1.+tt_M)*(sqr(kk_M)+3.)-3.*(1.-tt_M)*kk_M)*.5, JHM1 = ((1.-tt_D)*kk_M-(1.+tt_D))*.5,
 			 matr[7][8] = {
 					{ 1., -HH1, -1., -1., JJP1, JJM1, 0., 0.},
 					{ 0., -HH2,  0.,  3., JJP2, JJM2, 0., 0.},
@@ -429,22 +429,22 @@ double CCohes3D::TakeEshelby_shear_two(double c0, double eps, int max_iter)
 	int k_iter = 0, k = 0, l;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 //...дописываем когезионную часть в матрице (A0, D0, A*0, D*0, A1, B1, C1, D1, A*1, B*1, C*1, D*1, C2, B2);
-	real_T C_I = get_param(NUM_SHEAR-1+NUM_SHIFT), kk_I = sqrt(C_I/ku_I), tt_I = exp(-2.*kk_I), 
-			 C_M = get_param(NUM_SHEAR-1), kk_M = sqrt(C_M/ku_M), tt_D = exp(kk_M*(RR2-1.)), 
+	real_T C_I = get_param(NUM_SHEAR-1+NUM_SHIFT), kk_I = ku_I ? sqrt(C_I/ku_I) : 0., tt_I = exp(-2.*kk_I), 
+			 C_M = get_param(NUM_SHEAR-1), kk_M = sqrt(C_M/ku_M), tt_M = exp(-2.*kk_M), tt_D = exp(-2.*kk_M*RR2), 
 			 HH1  = ((1.+tt_I)*kk_I-(1.-tt_I))*.5, 
 			 HH2  = ((1.-tt_I)*(sqr(kk_I)+3.)-3.*(1.+tt_I)*kk_I)*.5,
-			 JJP1 =  (kk_M-1.), JJP2 = ((sqr(kk_M)+3.)-3.*kk_M), 
-			 JJM1 = -(kk_M+1.), JJM2 = ((sqr(kk_M)+3.)+3.*kk_M), 
-			 JHP1 =  (kk_M*RR2-1.)*ff*tt_D, JHP2 = ((sqr(kk_M*RR2)+3.)-3.*kk_M*RR2)*fR5*tt_D, 
-			 JHM1 = -(kk_M*RR2+1.)*ff/tt_D, JHM2 = ((sqr(kk_M*RR2)+3.)+3.*kk_M*RR2)*fR5/tt_D,
+			 JJP1 = ((1.+tt_M)*kk_M-(1.-tt_M))*.5, JJP2 = ((1.-tt_M)*(sqr(kk_M)+3.)-3.*(1.+tt_M)*kk_M)*.5, 
+			 JJM1 = ((1.-tt_M)*kk_M-(1.+tt_M))*.5, JJM2 = ((1.+tt_M)*(sqr(kk_M)+3.)-3.*(1.-tt_M)*kk_M)*.5, 
+			 JHP1 = ((1.+tt_D)*kk_M-(1.-tt_D))*.5, JHP2 = ((1.-tt_D)*(sqr(kk_M)+3.)-3.*(1.+tt_D)*kk_M)*.5, 
+			 JHM1 = ((1.-tt_D)*kk_M-(1.+tt_D))*.5, JHM2 = ((1.+tt_D)*(sqr(kk_M)+3.)-3.*(1.-tt_D)*kk_M)*.5,
 			 kp_I = sqrt(C_I/mu_I), tp_I = exp(-2.*kp_I), 
-			 kp_M = sqrt(C_M/mu_M), tp_D = exp(kp_M*(RR2-1.)),
+			 kp_M = sqrt(C_M/mu_M), tp_M = exp(-2.*kp_M), tp_D = exp(-2.*kp_M*RR2), tn_D = exp(	(kp_M-kk_M)*(RR2-1.)),
 			 HP1  = ((1.+tp_I)*kp_I-(1.-tp_I))*.5, 
 			 HP2  = ((1.-tp_I)*(sqr(kp_I)+3.)-3.*(1.+tp_I)*kp_I)*.5,
-			 JPP1 =  (kp_M-1.), JPP2 = ((sqr(kp_M)+3.)-3.*kp_M), 
-			 JPM1 = -(kp_M+1.), JPM2 = ((sqr(kp_M)+3.)+3.*kp_M), 
-			 JDP1 =  (kp_M*RR2-1.)*ff*tp_D, JDP2 = ((sqr(kp_M*RR2)+3.)-3.*kp_M*RR2)*fR5*tt_D, 
-			 JDM1 = -(kp_M*RR2+1.)*ff/tp_D, JDM2 = ((sqr(kp_M*RR2)+3.)+3.*kp_M*RR2)*fR5/tt_D;
+			 JPP1 = ((1.+tp_M)*kp_M-(1.-tp_M))*.5, JPP2 = ((1.-tp_M)*(sqr(kp_M)+3.)-3.*(1.+tp_M)*kp_M)*.5, 
+			 JPM1 = ((1.-tp_M)*kp_M-(1.+tp_M))*.5, JPM2 = ((1.+tp_M)*(sqr(kp_M)+3.)-3.*(1.-tp_M)*kp_M)*.5, 
+			 JDP1 = ((1.+tp_D)*kp_M-(1.-tp_D))*tn_D*.5, JDP2 = ((1.-tp_D)*(sqr(kp_M)+3.)-3.*(1.+tp_D)*kp_M)*tn_D*.5, 
+			 JDM1 = ((1.-tp_D)*kp_M-(1.+tp_D))*tn_D*.5, JDM2 = ((1.+tp_D)*(sqr(kp_M)+3.)-3.*(1.-tp_D)*kp_M)*tn_D*.5;
 ////////////////////////////////////////////
 //...заполняем строки когезионной матрицы;
 	matr[0][2] = -3.*HP2/C_I; 	//...сшивка функций;
